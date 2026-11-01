@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin Pro | Estefany Travel</title>
+    
+    <!-- SDKs Globales de Firebase Compat para la Nube -->
+    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore-compat.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-wrapper { max-width: 750px; margin: 20px auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .admin-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; flex-wrap: wrap; }
+        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; background: #f0f4f8; color: var(--azul); transition: 0.3s; min-width: 140px; }
+        .tab-btn.active { background: var(--rosa); color: white; }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+        h2 { color: var(--azul); margin-bottom: 15px; font-size: 1.5rem; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--azul); font-size: 13px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; }
+        
+        .file-upload-box { border: 2px dashed #ff9800; padding: 15px; text-align: center; border-radius: 10px; background: #fff8f0; cursor: pointer; position: relative; }
+        .preview-container { position: relative; display: inline-block; margin-top: 10px; }
+        .preview-img { max-width: 120px; max-height: 120px; border-radius: 8px; object-fit: cover; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .btn-quitar-foto {
+            position: absolute; top: -8px; right: -8px; background: #e53935; color: white;
+            border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 10;
+        }
+
+        .galeria-preview-grid { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+        .thumb-box { position: relative; display: inline-block; }
+        .thumb-box img { width: 75px; height: 75px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); display: block; }
+
+        .btn-action { background: var(--naranja); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; margin-top: 10px; }
+        .btn-logout { background: #e53935; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        
+        #modo-alerta { background: #e3f2fd; color: #0d47a1; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; font-weight: bold; display: none; justify-content: space-between; align-items: center; }
+
+        .filtros-container { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .btn-filtro { padding: 6px 12px; border: 1px solid var(--azul); background: white; color: var(--azul); border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .btn-filtro.active { background: var(--azul); color: white; }
+        
+        .plan-gestion-card { background: #f9f9f9; border: 1px solid #ddd; padding: 12px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .plan-gestion-info { display: flex; align-items: center; gap: 12px; }
+        .plan-gestion-info img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
+        .plan-gestion-botones { display: flex; gap: 5px; }
+        .btn-mini { padding: 6px 10px; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .btn-editar { background: #2196F3; color: white; }
+        .btn-eliminar { background: #e53935; color: white; }
+        .btn-subir { background: #4CAF50; color: white; }
+    </style>
+</head>
+<body style="padding: 15px;" onload="inicializarAdmin()">
+
+<div class="admin-wrapper">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2>🛠️ Panel de Control Estefany Travel</h2>
+        <a href="index.html" style="color: var(--rosa); text-decoration: none; font-weight: bold; font-size: 13px;">🏠 Ver Web</a>
+    </div>
+
+    <div class="admin-tabs">
+        <button class="tab-btn active" id="tab-crear-btn" onclick="cambiarTab('crear')">➕ Añadir / Editar Plan</button>
+        <button class="tab-btn" onclick="cambiarTab('gestionar')">📋 Gestionar Planes Nube</button>
+        <button class="tab-btn" onclick="cambiarTab('banners')">🖼️ Banners y Flyers</button>
+    </div>
+
+    <!-- SECCIÓN 1: CREAR / EDITAR -->
+    <div id="seccion-crear" class="admin-section active">
+        
+        <div id="modo-alerta">
+            <span id="texto-modo">✏️ Editando plan existente</span>
+            <button onclick="limpiarFormulario()" style="background:none; border:none; color:#0d47a1; font-weight:bold; cursor:pointer;">Cancelar [Crear Nuevo]</button>
+        </div>
+
+        <input type="hidden" id="edit-index" value="">
+        
+        <div class="form-group">
+            <label>📂 Categoría del Plan</label>
+            <select id="admin-categoria">
+                <option value="rosario">Islas del Rosario</option>
+                <option value="baru">Barú</option>
+                <option value="cercanas">Cercanas a Cartagena</option>
+                <option value="tours">Tours y Experiencias</option>
+                <option value="hoteles">🏨 Alojamientos / Hoteles</option>
+                <option value="paquetes">🎁 Paquetes Todo Incluido</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>🏷️ Título del Plan, Hotel o Paquete</label>
+            <input type="text" id="admin-titulo" placeholder="Ej: Hotel Las Américas o Paquete Dubái">
+        </div>
+
+        <div class="form-group">
+            <label>🖼️ Imagen Principal (Portada de la Tarjeta)</label>
+            <div class="file-upload-box" onclick="document.getElementById('file-portada').click()">
+                <span id="texto-portada-box" style="font-size: 13px; color: var(--naranja); display:block;">➕ Toca aquí para elegir foto del dispositivo</span>
+                <input type="file" id="file-portada" accept="image/*" onchange="comprimirYAsignar(this, 'portada')" style="display:none;">
+                
+                <div id="wrapper-preview-portada" class="preview-container" style="display: none;" onclick="event.stopPropagation()">
+                    <img id="preview-portada" class="preview-img" src="" alt="Portada">
+                    <button type="button" class="btn-quitar-foto" onclick="quitarPortada(event)">✕</button>
+                </div>
+            </div>
+            <input type="hidden" id="admin-imagen">
+        </div>
+
+        <div class="form-group">
+            <label>📸 Fotos Adicionales (Galería para "Más Información")</label>
+            <div class="file-upload-box" style="border-color: #2196F3; background: #e3f2fd;" onclick="document.getElementById('file-galeria').click()">
+                <span id="texto-galeria-box" style="font-size: 13px; color: #2196F3; display:block; font-weight: bold;">➕ Toca aquí para añadir una foto a la galería</span>
+                <input type="file" id="file-galeria" accept="image/*" onchange="comprimirYAsignar(this, 'galeria')" style="display:none;">
+                
+                <div id="galeria-previews" class="galeria-preview-grid" style="margin-top: 10px;" onclick="event.stopPropagation()"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>💰 Precio Adulto / Noche (Ej: 450.000)</label>
+            <input type="text" id="admin-precioAdulto" placeholder="450.000">
+        </div>
+
+        <div class="form-group">
+            <label>👦 Precio Niño / Adicional (Ej: 300.000 o N/A)</label>
+            <input type="text" id="admin-precioNino" placeholder="N/A">
+        </div>
+
+        <div class="form-group">
+            <label>⭐ Etiqueta / Badge</label>
+            <select id="admin-badge">
+                <option value="VIP">VIP</option>
+                <option value="Relax">Relax</option>
+                <option value="Familiar">Familiar</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Promo">Promo</option>
+                <option value="Lujo">Lujo</option>
+                <option value="Económico">Económico</option>
+                <option value="Cerca">Cerca</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>📝 Descripción Completa</label>
+            <textarea id="admin-descripcion" rows="3" placeholder="Detalles de la experiencia, alojamiento o paquete..."></textarea>
+        </div>
+
+        <button class="btn-action" onclick="guardarPlanAdminNube()">💾 Guardar en la Nube Global</button>
+        <button type="button" onclick="limpiarFormulario()" style="background:#607D8B; color:white; border:none; padding:10px; border-radius:8px; width:100%; margin-top:8px; cursor:pointer; font-weight:bold;">🧹 Limpiar / Nuevo Plan</button>
+    </div>
+
+    <!-- SECCIÓN 2: GESTIONAR Y FILTRAR -->
+    <div id="seccion-gestionar" class="admin-section">
+        <h2>📋 Lista de Planes en la Nube</h2>
+        <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Filtra por categoría para ordenar o editar fácilmente:</p>
+        
+        <div class="filtros-container">
+            <button class="btn-filtro active" onclick="filtrarCategoria('todos', this)">Todos</button>
+            <button class="btn-filtro" onclick="filtrarCategoria('rosario', this)">Rosario</button>
+            <button class="btn-filtro" onclick="filtrarCategoria('baru', this)">Barú</button>
+            <button class="btn-filtro" onclick="filtrarCategoria('tours', this)">Tours</button>
+            <button class="btn-filtro" onclick="filtrarCategoria('hoteles', this)">Hoteles</button>
+            <button class="btn-filtro" onclick="filtrarCategoria('paquetes', this)">Paquetes</button>
+        </div>
+
+        <div id="lista-gestion-planes"></div>
+    </div>
+
+    <!-- SECCIÓN 3: GESTIÓN DE BANNERS Y FLYERS PROMOCIONALES -->
+    <div id="seccion-banners" class="admin-section">
+        <h2>🖼️ Banners y Flyers Promocionales</h2>
+        <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Sube imágenes o flyers publicitarios que aparecerán en el carrusel superior de la página de inicio:</p>
+        
+        <div class="form-group">
+            <label>➕ Subir Nuevo Flyer o Banner</label>
+            <div class="file-upload-box" style="border-color: #e91e63; background: #fff0f5;" onclick="document.getElementById('file-banner').click()">
+                <span id="texto-banner-box" style="font-size: 13px; color: #e91e63; display:block; font-weight: bold;">Toca aquí para seleccionar una imagen de flyer</span>
+                <input type="file" id="file-banner" accept="image/*" onchange="comprimirYAsignar(this, 'banner')" style="display:none;">
+            </div>
+        </div>
+
+        <h3 style="font-size: 1.1rem; color: var(--azul); margin-top: 20px; margin-bottom: 10px;">Flyers Activos en el Carrusel:</h3>
+        <div id="lista-gestion-banners"></div>
+    </div>
+
+    <button class="btn-logout" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+</div>
+
+<!-- SCRIPT DE FIREBASE Y LÓGICA DEL ADMIN -->
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAk1O5CEgzsgvncdNwVN8W7l_mMWhjRc_Y",
+        authDomain: "estefany-travel.firebaseapp.com",
+        projectId: "estefany-travel",
+        storageBucket: "estefany-travel.firebasestorage.app",
+        messagingSenderId: "871790718558",
+        appId: "1:871790718558:web:13c3de7c4064065a9f0ecf"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    if (localStorage.getItem("sesionAdmin") !== "activo") {
+        alert("Acceso no autorizado. Inicia sesión primero.");
+        window.location.href = "login.html";
+    }
+
+    let categoriaFiltroActual = 'todos';
+    let galeriaTemporal = [];
+
+    function inicializarAdmin() {
+        renderizarListaBanners();
+    }
+
+    function cambiarTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+        
+        if (tab === 'crear') {
+            document.getElementById('tab-crear-btn').classList.add('active');
+            document.getElementById('seccion-crear').classList.add('active');
+        } else if (tab === 'gestionar') {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('seccion-gestionar').classList.add('active');
+            renderizarListaGestion();
+        } else if (tab === 'banners') {
+            document.querySelectorAll('.tab-btn')[2].classList.add('active');
+            document.getElementById('seccion-banners').classList.add('active');
+            renderizarListaBanners();
+        }
+    }
+
+    function comprimirYAsignar(input, destino) {
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let img = new Image();
+                img.onload = function() {
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    
+                    let maxW = 900;
+                    let maxH = 900;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxW) { height *= maxW / width; width = maxW; }
+                    } else {
+                        if (height > maxH) { width *= maxH / height; height = maxH; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    let imageUrl = canvas.toDataURL('image/jpeg', 0.75);
+
+                    if (destino === 'portada') {
+                        document.getElementById("preview-portada").src = imageUrl;
+                        document.getElementById("wrapper-preview-portada").style.display = "inline-block";
+                        document.getElementById("texto-portada-box").style.display = "none";
+                        document.getElementById("admin-imagen").value = imageUrl;
+                    } else if (destino === 'galeria') {
+                        galeriaTemporal.push(imageUrl);
+                        renderizarGaleriaPreviews();
+                        input.value = "";
+                    } else if (destino === 'banner') {
+                        let banners = JSON.parse(localStorage.getItem("bannersPromos")) || [];
+                        banners.push(imageUrl);
+                        localStorage.setItem("bannersPromos", JSON.stringify(banners));
+                        input.value = "";
+                        renderizarListaBanners();
+                        alert("¡Flyer añadido al carrusel con éxito!");
+                    }
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function quitarPortada(event) {
+        event.stopPropagation();
+        document.getElementById("admin-imagen").value = "";
+        document.getElementById("preview-portada").src = "";
+        document.getElementById("wrapper-preview-portada").style.display = "none";
+        document.getElementById("texto-portada-box").style.display = "block";
+        document.getElementById("file-portada").value = "";
+    }
+
+    function renderizarGaleriaPreviews() {
+        let contenedor = document.getElementById("galeria-previews");
+        contenedor.innerHTML = "";
+        let textoBox = document.getElementById("texto-galeria-box");
+        if (galeriaTemporal.length > 0) {
+            textoBox.innerText = "➕ Añadir otra foto a la galería";
+        } else {
+            textoBox.innerText = "➕ Toca aquí para añadir una foto a la galería";
+        }
+        galeriaTemporal.forEach((foto, idx) => {
+            let box = document.createElement("div");
+            box.className = "thumb-box";
+            box.innerHTML = `
+                <img src="${foto}" alt="Extra">
+                <button type="button" class="btn-quitar-foto" onclick="quitarFotoGaleria(event, ${idx})">✕</button>
+            `;
+            contenedor.appendChild(box);
+        });
+    }
+
+    function quitarFotoGaleria(event, index) {
+        event.stopPropagation();
+        galeriaTemporal.splice(index, 1);
+        renderizarGaleriaPreviews();
+    }
+
+    function renderizarListaBanners() {
+        let contenedor = document.getElementById("lista-gestion-banners");
+        let banners = JSON.parse(localStorage.getItem("bannersPromos")) || [];
+
+        if (banners.length === 0) {
+            contenedor.innerHTML = "<p style='color:#666; text-align:center;'>No hay flyers promocionales subidos aún.</p>";
+            return;
+        }
+
+        contenedor.innerHTML = "";
+        banners.forEach((foto, index) => {
+            contenedor.innerHTML += `
+            <div class="plan-gestion-card">
+                <div class="plan-gestion-info">
+                    <img src="${foto}" alt="Flyer" style="width: 80px; height: 50px; object-fit: cover;">
+                    <div><strong>Flyer Promocional #${index + 1}</strong></div>
+                </div>
+                <div class="plan-gestion-botones">
+                    <button class="btn-mini btn-eliminar" onclick="eliminarBanner(${index})">🗑️ Eliminar</button>
+                </div>
+            </div>`;
+        });
+    }
+
+    function eliminarBanner(index) {
+        if (confirm("¿Estás seguro de eliminar este flyer del carrusel?")) {
+            let banners = JSON.parse(localStorage.getItem("bannersPromos")) || [];
+            banners.splice(index, 1);
+            localStorage.setItem("bannersPromos", JSON.stringify(banners));
+            renderizarListaBanners();
+        }
+    }
+
+    // GUARDAR O ACTUALIZAR PLAN EN LA NUBE (FIRESTORE)
+    function guardarPlanAdminNube() {
+        let titulo = document.getElementById("admin-titulo").value;
+        if (!titulo) { alert("Por favor escribe el título del plan."); return; }
+
+        let editId = document.getElementById("edit-index").value;
+        let imagenFinal = document.getElementById("admin-imagen").value || "images/default.jpg";
+
+        let planData = {
+            categoria: document.getElementById("admin-categoria").value,
+            titulo: titulo,
+            imagen: imagenFinal,
+            galeria: galeriaTemporal,
+            precioAdulto: document.getElementById("admin-precioAdulto").value || "0",
+            precioNiño: document.getElementById("admin-precioNino").value || "N/A",
+            badge: document.getElementById("admin-badge").value,
+            badgeClass: "vip",
+            descripcion: document.getElementById("admin-descripcion").value || "Disfruta de esta gran experiencia.",
+            salida: "07:30 AM desde el Muelle.",
+            regreso: "04:00 PM aproximado.",
+            incluye: ["Transporte", "Asistencia", "Guía"]
+        };
+
+        if (editId !== "") {
+            db.collection("planes").doc(editId).update(planData).then(() => {
+                alert("¡Plan actualizado en la nube con éxito!");
+                limpiarFormulario();
+                cambiarTab('gestionar');
+            }).catch((e) => {
+                console.error("Error al actualizar:", e);
+                alert("Hubo un error al actualizar en la nube.");
+            });
+        } else {
+            db.collection("planes").add(planData).then(() => {
+                alert("¡Nuevo plan publicado en la nube global!");
+                limpiarFormulario();
+                cambiarTab('gestionar');
+            }).catch((e) => {
+                console.error("Error al guardar:", e);
+                alert("Hubo un error al guardar en la nube.");
+            });
+        }
+    }
+
+    function limpiarFormulario() {
+        document.getElementById("admin-titulo").value = "";
+        document.getElementById("admin-imagen").value = "";
+        document.getElementById("preview-portada").src = "";
+        document.getElementById("wrapper-preview-portada").style.display = "none";
+        document.getElementById("texto-portada-box").style.display = "block";
+        document.getElementById("file-portada").value = "";
+        document.getElementById("admin-precioAdulto").value = "";
+        document.getElementById("admin-precioNino").value = "";
+        document.getElementById("admin-badge").value = "VIP";
+        document.getElementById("admin-descripcion").value = "";
+        document.getElementById("edit-index").value = "";
+        document.getElementById("galeria-previews").innerHTML = "";
+        document.getElementById("texto-galeria-box").innerText = "➕ Toca aquí para añadir una foto a la galería";
+        document.getElementById("modo-alerta").style.display = "none";
+        document.getElementById("tab-crear-btn").innerText = "➕ Añadir / Editar Plan";
+        document.getElementById("file-galeria").value = "";
+        galeriaTemporal = [];
+    }
+
+    function filtrarCategoria(cat, btn) {
+        categoriaFiltroActual = cat;
+        document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderizarListaGestion();
+    }
+
+    // RENDERIZAR GESTIÓN DESDE LA NUBE
+    function renderizarListaGestion() {
+        let contenedor = document.getElementById("lista-gestion-planes");
+        contenedor.innerHTML = "<p style='text-align:center;'>Cargando planes desde la nube...</p>";
+
+        db.collection("planes").get().then((querySnapshot) => {
+            let planesFirestore = [];
+            querySnapshot.forEach((docSnap) => {
+                planesFirestore.push({ idFirebase: docSnap.id, ...docSnap.data() });
+            });
+
+            let planesFiltrados = planesFirestore;
+            if (categoriaFiltroActual !== 'todos') {
+                planesFiltrados = planesFirestore.filter(p => p.categoria === categoriaFiltroActual);
+            }
+
+            if (planesFiltrados.length === 0) {
+                contenedor.innerHTML = "<p style='color:#666; text-align:center;'>No hay planes en esta categoría en la nube.</p>";
+                return;
+            }
+
+            contenedor.innerHTML = "";
+            planesFiltrados.forEach((plan) => {
+                contenedor.innerHTML += `
+                <div class="plan-gestion-card">
+                    <div class="plan-gestion-info">
+                        <img src="${plan.imagen}" alt="Foto" onerror="this.src='images/default.jpg'">
+                        <div>
+                            <strong>${plan.titulo}</strong><br>
+                            <small style="color:#666;">Cat: ${plan.categoria} | Adulto: $${plan.precioAdulto}</small>
+                        </div>
+                    </div>
+                    <div class="plan-gestion-botones">
+                        <button class="btn-mini btn-editar" onclick="cargarParaEditar('${plan.idFirebase}')">✏️</button>
+                        <button class="btn-mini btn-eliminar" onclick="eliminarPlan('${plan.idFirebase}')">🗑️</button>
+                    </div>
+                </div>`;
+            });
+        }).catch((e) => {
+            console.error("Error al cargar la lista:", e);
+            contenedor.innerHTML = "<p style='color:red; text-align:center;'>Error al conectar con la nube.</p>";
+        });
+    }
+
+    function eliminarPlan(idFirebase) {
+        if (confirm("¿Estás seguro de eliminar este plan de la nube?")) {
+            db.collection("planes").doc(idFirebase).delete().then(() => {
+                alert("Plan eliminado con éxito.");
+                renderizarListaGestion();
+            }).catch((e) => {
+                console.error("Error al eliminar:", e);
+                alert("No se pudo eliminar el plan.");
+            });
+        }
+    }
+
+    function cargarParaEditar(idFirebase) {
+        db.collection("planes").doc(idFirebase).get().then((docSnap) => {
+            if (!docSnap.exists) return;
+            let planEncontrado = { idFirebase: docSnap.id, ...docSnap.data() };
+
+            document.getElementById("edit-index").value = planEncontrado.idFirebase;
+            document.getElementById("admin-categoria").value = planEncontrado.categoria;
+            document.getElementById("admin-titulo").value = planEncontrado.titulo;
+            document.getElementById("admin-imagen").value = planEncontrado.imagen;
+            
+            if(planEncontrado.imagen) {
+                document.getElementById("preview-portada").src = planEncontrado.imagen;
+                document.getElementById("wrapper-preview-portada").style.display = "inline-block";
+                document.getElementById("texto-portada-box").style.display = "none";
+            }
+            
+            document.getElementById("admin-precioAdulto").value = planEncontrado.precioAdulto;
+            document.getElementById("admin-precioNino").value = planEncontrado.precioNiño;
+            document.getElementById("admin-badge").value = planEncontrado.badge || "VIP";
+            document.getElementById("admin-descripcion").value = planEncontrado.descripcion;
+            
+            galeriaTemporal = planEncontrado.galeria ? [...planEncontrado.galeria] : [];
+            renderizarGaleriaPreviews();
+
+            let alerta = document.getElementById("modo-alerta");
+            alerta.style.display = "flex";
+            document.getElementById("texto-modo").innerText = `✏️ Editando: "${planEncontrado.titulo}"`;
+            document.getElementById("tab-crear-btn").innerText = `✏️ Editando Plan`;
+
+            cambiarTab('crear');
+        }).catch((e) => {
+            console.error("Error al cargar para editar:", e);
+        });
+    }
+
+    function cerrarSesion() {
+        localStorage.removeItem("sesionAdmin");
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>

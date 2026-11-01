@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Plan | Estefany Travel & Tours</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .detalle-hero {
+            background: linear-gradient(135deg, rgba(255,152,0,.95), rgba(233,30,99,.90)), url('images/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 45px 20px 85px;
+            color: white;
+            text-align: center;
+            border-radius: 0 0 35px 35px;
+            box-shadow: 0 10px 25px rgba(233,30,99,.25);
+            position: relative;
+            margin-bottom: -55px;
+        }
+        
+        .detalle-hero h2 {
+            font-family: 'Baloo 2', cursive, sans-serif;
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 3px 12px rgba(0,0,0,.25);
+            margin-bottom: 5px;
+            line-height: 1.15;
+        }
+
+        .badge-detalle-hero {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(8px);
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.45);
+        }
+
+        .detalle-container { 
+            position: relative;
+            z-index: 10;
+            max-width: 800px; 
+            margin: 0 auto 30px; 
+            background: #ffffff; 
+            padding: 25px 20px; 
+            border-radius: 25px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.10); 
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        
+        .detalle-img-wrapper {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+        .detalle-img { width: 100%; height: 320px; object-fit: cover; display: block; transition: transform 0.3s; }
+        .detalle-img:hover { transform: scale(1.02); }
+
+        /* CAJA DE PRECIOS MODAL */
+        .precio-box { 
+            background: linear-gradient(135deg, #fff4e6, #ffe8d6); 
+            padding: 18px; 
+            border-radius: 16px; 
+            margin: 20px 0; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center;
+            border: 1px solid rgba(255, 152, 0, 0.25);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.08);
+        }
+        .precio-item-det {
+            text-align: center;
+        }
+        .precio-item-det small {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #666;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .precio-item-det span { 
+            color: var(--rosa); 
+            font-size: 1.4rem; 
+            font-weight: 900;
+            font-family: 'Baloo 2', sans-serif;
+        }
+        
+        .galeria-detalles { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 10px; margin-top: 12px; margin-bottom: 25px; }
+        .galeria-detalles img { width: 100%; height: 85px; object-fit: cover; border-radius: 10px; box-shadow: 0 3px 8px rgba(0,0,0,0.12); transition: transform 0.2s; cursor: pointer;}
+        .galeria-detalles img:hover { transform: scale(1.06); }
+        
+        .btn-regresar { display: inline-block; margin-top: 20px; color: var(--azul); text-decoration: none; font-weight: 700; padding: 10px 18px; background: #f0f4f8; border-radius: 12px; transition: 0.3s; font-size: 13px; }
+        .btn-regresar:hover { background: #e2e8f0; }
+        
+        /* TARJETAS DE INFORMACIÓN INTERNA */
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin: 20px 0; 
+            background: #f8fafc; 
+            padding: 16px; 
+            border-radius: 16px; 
+            border: 1px solid #e2e8f0;
+        }
+        .info-item { display: flex; flex-direction: column; }
+        .info-item strong { color: var(--azul); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;}
+        .info-item span { color: #475569; font-size: 13px; font-weight: 500; line-height: 1.4;}
+
+        .seccion-titulo-detalle {
+            font-family: 'Baloo 2', cursive, sans-serif;
+            color: var(--azul);
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #ff9800;
+            padding-bottom: 6px;
+        }
+
+        /* ESTILOS PROFESIONALES PARA EL FOOTER */
+        footer {
+            background: linear-gradient(135deg, #0d233a, #102c47);
+            color: #ffffff;
+            text-align: center;
+            padding: 40px 20px 30px;
+            margin-top: 35px;
+            font-size: 12px;
+            border-radius: 30px 30px 0 0;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+        }
+        .footer-content-wrapper { max-width: 600px; margin: 0 auto; }
+        .footer-logo-title { font-family: 'Satisfy', cursive; font-size: 26px; color: #ff9800; margin-bottom: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .footer-info-line { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; margin: 6px 0; color: #cbd5e1; font-size: 12px; }
+        .footer-info-line i { color: #ff9800; margin-right: 4px; }
+        .footer-sociales { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .footer-sociales a {
+            display: flex; align-items: center; justify-content: center; width: 45px; height: 45px;
+            background: rgba(255, 255, 255, 0.12); border-radius: 50%; color: #ffffff; font-size: 20px; text-decoration: none;
+            transition: 0.3s; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .footer-sociales a:hover { background: var(--rosa); transform: scale(1.12); }
+        .footer-legal-box {
+            background: rgba(0, 0, 0, 0.35); padding: 18px; border-radius: 14px; margin: 20px 0;
+            text-align: justify; font-size: 11px; line-height: 1.6; color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .footer-legal-box h5 { color: #ff9800; font-size: 12px; margin-bottom: 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; }
+
+        /* Lightbox */
+        #lightbox-modal {
+            display: none; position: fixed; z-index: 99999; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); justify-content: center; align-items: center; flex-direction: column;
+        }
+        #lightbox-img { max-width: 95%; max-height: 80vh; border-radius: 10px; object-fit: contain; box-shadow: 0 5px 25px rgba(0,0,0,0.5); }
+        .lightbox-close { position: absolute; top: 20px; right: 25px; color: white; font-size: 35px; font-weight: bold; cursor: pointer; background: none; border: none; }
+        .lightbox-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.15); color: white; border: none; font-size: 28px; padding: 12px 18px; cursor: pointer; border-radius: 50%; }
+        #lightbox-prev { left: 15px; } #lightbox-next { right: 15px; }
+        #lightbox-counter { color: white; margin-top: 15px; font-size: 14px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<nav class="menu">
+  <button onclick="abrirMenu()">☰</button>
+</nav>
+
+<div id="menu-lateral" class="menu-lateral">
+  <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+      <span style="color: white; font-weight: bold; font-size: 1.1rem;">Menú Principal</span>
+      <button onclick="cerrarMenu()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">✖</button>
+  </div>
+  <ul>
+    <li><a href="index.html"><i class="fas fa-house" style="color: #ff9800; width: 22px; text-align: center;"></i> Inicio</a></li>
+    <li><a href="pasadias.html"><i class="fas fa-umbrella-beach" style="color: #ff9800; width: 22px; text-align: center;"></i> Islas y Pasadías</a></li>
+    <li><a href="hoteles.html"><i class="fas fa-hotel" style="color: #ff9800; width: 22px; text-align: center;"></i> Alojamientos</a></li>
+    <li><a href="paquetes.html"><i class="fas fa-suitcase-rolling" style="color: #ff9800; width: 22px; text-align: center;"></i> Paquetes</a></li>
+  </ul>
+</div>
+<div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
+
+<header>
+    <a href="index.html" class="header-container" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
+        <img class="logo-img" src="logo.png" alt="Logo Estefany Travel" onerror="this.src='images/default.jpg'">
+        <div>
+            <div class="logo-text">Estefany Travel & Tours</div>
+            <small class="logo-slogan">Islas • Hospedajes • Experiencias</small>
+        </div>
+    </a>
+    <div class="carrito-icon" onclick="toggleCarrito()">
+        🛒<span id="carrito-contador">0</span>
+    </div>
+</header>
+
+<div class="detalle-hero">
+    <span class="badge-detalle-hero" id="hero-categoria">Categoría</span>
+    <h2 id="hero-titulo">Cargando experiencia...</h2>
+    <p style="opacity: 0.95; font-size: 13px; font-weight: 500;">✨ Descubre todos los detalles a continuación</p>
+</div>
+
+<div style="padding: 15px;">
+    <div class="detalle-container" id="contenedor-detalle">
+        
+        <div class="detalle-img-wrapper">
+            <img id="det-img" class="detalle-img" src="" alt="Imagen del plan" onerror="this.src='images/default.jpg'" onclick="abrirLightbox(0)" style="cursor: pointer;" title="Toca para ampliar foto">
+        </div>
+        
+        <div class="precio-box">
+            <div class="precio-item-det">
+                <small>👤 Adulto</small>
+                <span id="det-adulto"></span>
+            </div>
+            <div style="width: 1px; height: 35px; background: rgba(255, 152, 0, 0.3);"></div>
+            <div class="precio-item-det">
+                <small>👦 Niño</small>
+                <span id="det-nino"></span>
+            </div>
+        </div>
+        
+        <p id="det-desc" style="line-height: 1.7; color: #475569; margin-bottom: 20px; font-size: 14.5px;"></p>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <strong><i class="fas fa-clock" style="color: #ff9800;"></i> Salida</strong>
+                <span id="det-salida"></span>
+            </div>
+            <div class="info-item">
+                <strong><i class="fas fa-flag-checkered" style="color: #e91e63;"></i> Regreso</strong>
+                <span id="det-regreso"></span>
+            </div>
+        </div>
+        
+        <div class="seccion-titulo-detalle"><i class="fas fa-box-open" style="color: #ff9800;"></i> ¿Qué incluye?</div>
+        <ul id="det-incluye" style="margin-left: 20px; margin-top: 10px; color: #475569; margin-bottom: 25px; line-height: 1.7; font-size: 14px;"></ul>
+
+        <div id="seccion-galeria-extra" style="display: none;">
+            <div class="seccion-titulo-detalle"><i class="fas fa-images" style="color: #e91e63;"></i> Galería de Fotos</div>
+            <div class="galeria-detalles" id="det-galeria"></div>
+        </div>
+
+        <button class="btn-primary" onclick="abrirModalReservaPorId(planId)" style="margin-top: 15px; padding: 15px; font-size: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; width: 100%; border: none; box-shadow: 0 6px 20px rgba(255, 152, 0, 0.35); text-transform: uppercase; letter-spacing: 0.5px;">
+            🛒 Seleccionar Fechas y Reservar
+        </button>
+
+        <button class="btn-whatsapp" onclick="reservarEstePlan()" style="margin-top: 12px; padding: 15px; font-size: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; width: 100%; background: linear-gradient(135deg, #25d366, #1ebe57); color: white; border: none; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);">
+            💬 Consultar / Comprar por WhatsApp
+        </button>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="index.html" class="btn-regresar">← Explorar más planes</a>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL RESERVA -->
+<div id="modalReserva" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="cerrarReserva()">&times;</span>
+    <h3 id="reserva-titulo">Seleccionar Reserva</h3>
+
+    <div class="selector-cantidad">
+        <h4>👤 Adultos</h4>
+        <div class="contador-reserva">
+            <button onclick="cambiarReserva('adulto',-1)">−</button>
+            <span id="cantidad-adulto">1</span>
+            <button onclick="cambiarReserva('adulto',1)">+</button>
+        </div>
+    </div>
+
+    <div id="bloque-ninos" class="selector-cantidad">
+        <h4>👦 Niños</h4>
+        <div class="contador-reserva">
+            <button onclick="cambiarReserva('nino',-1)">−</button>
+            <span id="cantidad-nino">0</span>
+            <button onclick="cambiarReserva('nino',1)">+</button>
+        </div>
+    </div>
+
+    <div class="selector-fecha">
+      <h4>📅 Fecha de la reserva</h4>
+      <input type="date" id="fecha-reserva">
+    </div>
+    
+    <h3 id="total-reserva">Total: $0</h3>
+
+    <button class="btn-primary" onclick="confirmarReserva()">
+      Agregar al Carrito
+    </button>
+
+    <button class="btn-secondary" onclick="comprarPorWhatsApp()">
+      Comprar por WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- FOOTER PROFESIONAL Y LEGAL -->
+<footer>
+  <div class="footer-content-wrapper">
+      <div class="footer-logo-title">Estefany Travel & Tours</div>
+      
+      <div class="footer-info-line">
+          <span><i class="fas fa-map-marker-alt"></i> Cartagena, Bolívar, Colombia</span>
+      </div>
+      <div class="footer-info-line">
+          <span><i class="fas fa-id-card"></i> NIT: 1002095958-6</span>
+          <span>&nbsp;|&nbsp;</span>
+          <span><i class="fas fa-certificate"></i> RNT: 301647</span>
+      </div>
+
+      <!-- REDES SOCIALES OFICIALES -->
+      <div class="footer-sociales">
+          <a href="https://www.instagram.com/estefanytraveltours?cplk=dHF4eWZuOHh2MHBt" target="_blank" title="Instagram Oficial"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com/share/19rjHidW6A/" target="_blank" title="Facebook Oficial"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://wa.me/573215062703" target="_blank" title="WhatsApp Oficial"><i class="fab fa-whatsapp"></i></a>
+      </div>
+
+      <!-- AVISO LEGAL SOBRE PROTECCIÓN DE MENORES -->
+      <div class="footer-legal-box">
+          <h5>⚠️ Aviso Importante / Prevención ESCNNA</h5>
+          De acuerdo con lo establecido en la Ley 679 de 2001, la agencia <strong>ESTEFANY TRAVEL & TOURS</strong> advierte al turista que la explotación y el abuso sexual de menores de edad en el país son sancionados penal y administrativamente, conforme a las leyes vigentes. Asimismo, en cumplimiento de la Resolución 3840 de 2009 y la Ley 1336 de 2015, la agencia adopta un Código de Conducta para prevenir e impedir la explotación sexual de niños, niñas y adolescentes en la actividad turística.
+      </div>
+
+      <p style="margin-top: 15px; font-size: 11px; opacity: 0.75;">&copy; 2026 Estefany Travel & Tours. Todos los derechos reservados.</p>
+      <p style="margin-top: 12px;">
+        <a href="admin.html" style="color: rgba(255,255,255,0.5); font-size: 11px; text-decoration: none; font-weight: 600;">
+          ⚙️ Acceso Administrador
+        </a>
+      </p>
+  </div>
+</footer>
+
+<div id="panel-carrito" class="panel-carrito">
+    <div class="carrito-header">
+        <h3>🛒 Mi Carrito</h3>
+        <button onclick="cerrarCarrito()">✖</button>
+    </div>
+    <div id="lista-carrito">
+        <p>Tu carrito está vacío.</p>
+    </div>
+    <div class="carrito-footer">
+        <h4>Total: <span id="total-carrito">$0</span></h4>
+        <button class="btn-whatsapp" onclick="comprarCarritoPorWhatsApp()" style="margin-top: 10px; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; background: #25d366; color: white;">
+            📲 Enviar pedido
+        </button>
+    </div>
+</div>
+
+<a href="https://wa.me/573215062703?text=Hola,%20quisiera%20información" class="whatsapp-flotante" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+</a>
+
+<div id="lightbox-modal">
+    <button class="lightbox-close" onclick="cerrarLightbox()">&times;</button>
+    <button class="lightbox-btn" id="lightbox-prev" onclick="cambiarImagenLightbox(-1)">&#10094;</button>
+    <img id="lightbox-img" src="" alt="Vista previa ampliada">
+    <button class="lightbox-btn" id="lightbox-next" onclick="cambiarImagenLightbox(1)">&#10095;</button>
+    <div id="lightbox-counter">1 / 1</div>
+</div>
+
+<script src="script.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const planId = urlParams.get('id');
+
+    let planesGuardados = [];
+    try { planesGuardados = JSON.parse(localStorage.getItem("planesExtra")) || planesDeViaje; } 
+    catch(e) { planesGuardados = planesDeViaje; }
+
+    const planActual = planesGuardados.find(p => p.id === planId);
+    
+    let galeriaCompleta = [];
+    let indiceActualLightbox = 0;
+
+    if (planActual) {
+        document.getElementById("hero-titulo").innerText = planActual.titulo;
+        document.getElementById("hero-categoria").innerText = planActual.categoria.toUpperCase();
+
+        let imgPortada = planActual.imagen || "images/default.jpg";
+        document.getElementById("det-img").src = imgPortada;
+        document.getElementById("det-adulto").innerText = `$${planActual.precioAdulto}`;
+        document.getElementById("det-nino").innerText = planActual.precioNiño === "N/A" ? "N/A" : `$${planActual.precioNiño}`;
+        document.getElementById("det-desc").innerText = planActual.descripcion;
+        document.getElementById("det-salida").innerText = planActual.salida || "07:30 AM desde el Muelle.";
+        document.getElementById("det-regreso").innerText = planActual.regreso || "04:00 PM aproximado.";
+        
+        galeriaCompleta.push(imgPortada);
+        
+        let lista = document.getElementById("det-incluye");
+        lista.innerHTML = "";
+        let incluyeArray = planActual.incluye || ["Transporte en lancha rápida", "Guía profesional", "Almuerzo típico"];
+        incluyeArray.forEach(inc => {
+            let li = document.createElement("li");
+            li.innerHTML = `<i class="fas fa-check" style="color: var(--naranja); margin-right: 8px;"></i> ${inc}`;
+            lista.appendChild(li);
+        });
+
+        const seccionGaleria = document.getElementById("seccion-galeria-extra");
+        const contenedorGaleria = document.getElementById("det-galeria");
+
+        if (planActual.galeria && planActual.galeria.length > 0) {
+            seccionGaleria.style.display = "block";
+            contenedorGaleria.innerHTML = "";
+            planActual.galeria.forEach((fotoUrl, index) => {
+                galeriaCompleta.push(fotoUrl);
+                let img = document.createElement("img");
+                img.src = fotoUrl;
+                img.alt = "Foto galería";
+                let indexLightbox = index + 1;
+                img.onclick = () => abrirLightbox(indexLightbox);
+                contenedorGaleria.appendChild(img);
+            });
+        } else {
+            seccionGaleria.style.display = "none";
+        }
+
+    } else {
+        document.getElementById("hero-titulo").innerText = "Plan no encontrado";
+        document.getElementById("hero-categoria").style.display = "none";
+        document.getElementById("contenedor-detalle").innerHTML = "<h2 style='text-align:center; color:var(--azul); margin-top:20px;'>Lo sentimos, no encontramos este plan.</h2><div style='text-align:center;'><a href='index.html' class='btn-regresar'>← Volver al inicio</a></div>";
+    }
+
+    function abrirLightbox(index) {
+        indiceActualLightbox = index;
+        actualizarImagenLightbox();
+        document.getElementById("lightbox-modal").style.display = "flex";
+    }
+
+    function cerrarLightbox() {
+        document.getElementById("lightbox-modal").style.display = "none";
+    }
+
+    function cambiarImagenLightbox(direccion) {
+        indiceActualLightbox += direccion;
+        if (indiceActualLightbox < 0) indiceActualLightbox = galeriaCompleta.length - 1; 
+        else if (indiceActualLightbox >= galeriaCompleta.length) indiceActualLightbox = 0;
+        actualizarImagenLightbox();
+    }
+
+    function actualizarImagenLightbox() {
+        document.getElementById("lightbox-img").src = galeriaCompleta[indiceActualLightbox];
+        document.getElementById("lightbox-counter").innerText = `${indiceActualLightbox + 1} / ${galeriaCompleta.length}`;
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (document.getElementById("lightbox-modal").style.display === "flex") {
+            if (event.key === "ArrowRight") cambiarImagenLightbox(1);
+            if (event.key === "ArrowLeft") cambiarImagenLightbox(-1);
+            if (event.key === "Escape") cerrarLightbox();
+        }
+    });
+
+    function reservarEstePlan() {
+        if (!planActual) return;
+        let mensaje = `Hola Estefany Travel & Tours, quiero información y disponibilidad para el plan: *${planActual.titulo}*`;
+        window.open(`https://wa.me/573215062703?text=${encodeURIComponent(mensaje)}`, "_blank");
+    }
+
+    setTimeout(() => { if(typeof actualizarCarrito === 'function') { actualizarCarrito(); } }, 500);
+</script>
+
+</body>
+</html>

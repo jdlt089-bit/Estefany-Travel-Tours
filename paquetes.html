@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paquetes Promocionales | Estefany Travel & Tours</title>
+    <meta name="description" content="Aprovecha paquetes de hotel con pasadías gratis y ofertas imbatibles en Cartagena con Estefany Travel & Tours.">
+    <meta name="theme-color" content="#e91e63">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .hero-paquetes {
+            background: linear-gradient(135deg, rgba(233, 30, 99, 0.92), rgba(255, 152, 0, 0.88)), url('images/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 50px 20px 40px;
+            text-align: center;
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 12px 30px rgba(233, 30, 99, 0.25);
+            position: relative;
+            z-index: 2;
+        }
+        .hero-paquetes h1 {
+            font-family: 'Baloo 2', cursive, sans-serif;
+            font-size: 2.3rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 10px;
+            text-shadow: 0 3px 12px rgba(0,0,0,0.3);
+        }
+        .hero-paquetes p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #f1f5f9;
+            max-width: 500px;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #0d233a, #102c47);
+            color: #ffffff;
+            text-align: center;
+            padding: 40px 20px 30px;
+            margin-top: 35px;
+            font-size: 12px;
+            border-radius: 30px 30px 0 0;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+        }
+        .footer-content-wrapper { max-width: 600px; margin: 0 auto; }
+        .footer-logo-title { font-family: 'Satisfy', cursive; font-size: 26px; color: #ff9800; margin-bottom: 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .footer-info-line { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; margin: 6px 0; color: #cbd5e1; font-size: 12px; }
+        .footer-info-line i { color: #ff9800; margin-right: 4px; }
+        .footer-sociales { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .footer-sociales a {
+            display: flex; align-items: center; justify-content: center; width: 45px; height: 45px;
+            background: rgba(255, 255, 255, 0.12); border-radius: 50%; color: #ffffff; font-size: 20px; text-decoration: none;
+            transition: 0.3s; border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .footer-sociales a:hover { background: var(--rosa); transform: scale(1.12); }
+        .footer-legal-box {
+            background: rgba(0, 0, 0, 0.35); padding: 18px; border-radius: 14px; margin: 20px 0;
+            text-align: justify; font-size: 11px; line-height: 1.6; color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.12); box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .footer-legal-box h5 { color: #ff9800; font-size: 12px; margin-bottom: 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+<nav class="menu">
+  <button onclick="abrirMenu()">☰</button>
+</nav>
+
+<div id="menu-lateral" class="menu-lateral">
+  <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+      <span style="color: white; font-weight: bold; font-size: 1.1rem;">Menú Principal</span>
+      <button onclick="cerrarMenu()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;">✖</button>
+  </div>
+  <ul>
+    <li><a href="index.html"><i class="fas fa-house" style="color: #ff9800; width: 22px; text-align: center;"></i> Inicio</a></li>
+    <li><a href="pasadias.html"><i class="fas fa-umbrella-beach" style="color: #ff9800; width: 22px; text-align: center;"></i> Islas y Pasadías</a></li>
+    <li><a href="hoteles.html"><i class="fas fa-hotel" style="color: #ff9800; width: 22px; text-align: center;"></i> Alojamientos</a></li>
+    <li><a href="paquetes.html"><i class="fas fa-suitcase-rolling" style="color: #ff9800; width: 22px; text-align: center;"></i> Paquetes</a></li>
+  </ul>
+</div>
+<div id="overlay" class="overlay" onclick="cerrarMenu()"></div>
+
+<header>
+    <a href="index.html" class="header-container" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
+        <img class="logo-img" src="logo.png" alt="Logo Estefany Travel" onerror="this.src='images/default.jpg'">
+        <div>
+            <div class="logo-text">Estefany Travel & Tours</div>
+            <small class="logo-slogan">Islas • Hospedajes • Experiencias</small>
+        </div>
+    </a>
+    <div class="carrito-icon" onclick="toggleCarrito()">
+        🛒<span id="carrito-contador">0</span>
+    </div>
+</header>
+
+<section class="hero-paquetes">
+    <h1>🎁 Paquetes Especiales y Promociones</h1>
+    <p>¡Combina tu hospedaje con pasadías gratis! Aprovecha nuestros paquetes creados para darte el máximo beneficio al menor precio.</p>
+</section>
+
+<section class="planes-section">
+    <h3 class="section-title"><i class="fas fa-suitcase-rolling" style="color: #e91e63; margin-right: 6px;"></i> Paquetes Todo Incluido</h3>
+    <div class="cards-container" id="contenedor-paquetes-1"></div>
+    <div class="cards-container" id="contenedor-paquetes-2"></div>
+</section>
+
+<!-- MODAL RESERVA -->
+<div id="modalReserva" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="cerrarReserva()">&times;</span>
+    <h3 id="reserva-titulo">Seleccionar Reserva</h3>
+    <div class="selector-cantidad">
+        <h4>👤 Adultos</h4>
+        <div class="contador-reserva">
+            <button onclick="cambiarReserva('adulto',-1)">−</button>
+            <span id="cantidad-adulto">1</span>
+            <button onclick="cambiarReserva('adulto',1)">+</button>
+        </div>
+    </div>
+    <div id="bloque-ninos" class="selector-cantidad">
+        <h4>👦 Niños</h4>
+        <div class="contador-reserva">
+            <button onclick="cambiarReserva('nino',-1)">−</button>
+            <span id="cantidad-nino">0</span>
+            <button onclick="cambiarReserva('nino',1)">+</button>
+        </div>
+    </div>
+    <div class="selector-fecha">
+      <h4>📅 Fecha de la reserva</h4>
+      <input type="date" id="fecha-reserva">
+    </div>
+    <h3 id="total-reserva">Total: $0</h3>
+    <button class="btn-primary" onclick="confirmarReserva()">Agregar al Carrito</button>
+    <button class="btn-secondary" onclick="comprarPorWhatsApp()">Comprar por WhatsApp</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-content-wrapper">
+      <div class="footer-logo-title">Estefany Travel & Tours</div>
+      <div class="footer-info-line"><span><i class="fas fa-map-marker-alt"></i> Cartagena, Bolívar, Colombia</span></div>
+      <div class="footer-info-line"><span><i class="fas fa-id-card"></i> NIT: 1002095958-6</span><span>&nbsp;|&nbsp;</span><span><i class="fas fa-certificate"></i> RNT: 301647</span></div>
+      <div class="footer-sociales">
+          <a href="https://www.instagram.com/estefanytraveltours?cplk=dHF4eWZuOHh2MHBt" target="_blank" title="Instagram Oficial"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com/share/19rjHidW6A/" target="_blank" title="Facebook Oficial"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://wa.me/573215062703" target="_blank" title="WhatsApp Oficial"><i class="fab fa-whatsapp"></i></a>
+      </div>
+      <div class="footer-legal-box">
+          <h5>⚠️ Aviso Importante / Prevención ESCNNA</h5>
+          De acuerdo con lo establecido en la Ley 679 de 2001, la agencia <strong>ESTEFANY TRAVEL & TOURS</strong> advierte al turista que la explotación y el abuso sexual de menores de edad en el país son sancionados penal y administrativamente, conforme a las leyes vigentes. Asimismo, en cumplimiento de la Resolución 3840 de 2009 y la Ley 1336 de 2015, la agencia adopta un Código de Conducta para prevenir e impedir la explotación sexual de niños, niñas y adolescentes en la actividad turística.
+      </div>
+      <p style="margin-top: 15px; font-size: 11px; opacity: 0.75;">&copy; 2026 Estefany Travel & Tours. Todos los derechos reservados.</p>
+      <p style="margin-top: 12px;"><a href="admin.html" style="color: rgba(255,255,255,0.5); font-size: 11px; text-decoration: none; font-weight: 600;">⚙️ Acceso Administrador</a></p>
+  </div>
+</footer>
+
+<a href="https://wa.me/573215062703?text=Hola,%20quisiera%20información%20de%20paquetes" class="whatsapp-flotante" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+</a>
+
+<div id="panel-carrito" class="panel-carrito">
+    <div class="carrito-header"><h3>🛒 Mi Carrito</h3><button onclick="cerrarCarrito()">✖</button></div>
+    <div id="lista-carrito"><p>Tu carrito está vacío.</p></div>
+    <div class="carrito-footer">
+        <h4>Total: <span id="total-carrito">$0</span></h4>
+        <button class="btn-whatsapp" onclick="comprarCarritoPorWhatsApp()" style="margin-top: 10px; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; background: #25d366; color: white;">📲 Enviar pedido por WhatsApp</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

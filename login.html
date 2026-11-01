@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrador | Estefany Travel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .login-box {
+            max-width: 350px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .login-box h2 {
+            color: var(--azul);
+            margin-bottom: 20px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .login-input {
+            width: 100%;
+            padding: 12px 40px 12px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+        }
+        .btn-login {
+            background: var(--rosa);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+        }
+        .btn-login:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #mensaje-bloqueo {
+            color: #e53935;
+            font-size: 12px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body style="padding: 20px;" onload="verificarBloqueo()">
+
+<div class="login-box">
+    <h2>🔐 Panel Admin</h2>
+    <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Ingresa tus credenciales de acceso.</p>
+    
+    <div class="input-group">
+        <input type="text" id="user" class="login-input" placeholder="Usuario">
+    </div>
+
+    <div class="input-group">
+        <input type="password" id="pass" class="login-input" placeholder="Contraseña">
+        <i class="fas fa-eye toggle-password" id="ojo-btn" onclick="togglePassword()"></i>
+    </div>
+    
+    <button class="btn-login" id="btn-ingresar" onclick="verificarLogin()">Ingresar</button>
+    <div id="mensaje-bloqueo"></div>
+
+    <br><br>
+    <a href="index.html" style="font-size: 12px; color: var(--azul); text-decoration: none;">← Volver al sitio web</a>
+</div>
+
+<script>
+    function togglePassword() {
+        let passInput = document.getElementById("pass");
+        let ojo = document.getElementById("ojo-btn");
+        if (passInput.type === "password") {
+            passInput.type = "text";
+            ojo.classList.remove("fa-eye");
+            ojo.classList.add("fa-eye-slash");
+        } else {
+            passInput.type = "password";
+            ojo.classList.remove("fa-eye-slash");
+            ojo.classList.add("fa-eye");
+        }
+    }
+
+    function verificarBloqueo() {
+        let tiempoBloqueo = localStorage.getItem("tiempoBloqueoAdmin");
+        if (tiempoBloqueo) {
+            let ahora = new Date().getTime();
+            if (ahora < tiempoBloqueo) {
+                let segundosRestantes = Math.ceil((tiempoBloqueo - ahora) / 1000);
+                bloquearInterfaz(segundosRestantes);
+            } else {
+                localStorage.removeItem("tiempoBloqueoAdmin");
+                localStorage.setItem("intentosFallidos", "0");
+            }
+        }
+    }
+
+    function bloquearInterfaz(segundos) {
+        let btn = document.getElementById("btn-ingresar");
+        let msg = document.getElementById("mensaje-bloqueo");
+        btn.disabled = true;
+
+        let intervalo = setInterval(() => {
+            segundos--;
+            msg.innerText = `Demasiados intentos fallidos. Bloqueado por seguridad. Espera ${segundos}s`;
+            if (segundos <= 0) {
+                clearInterval(intervalo);
+                btn.disabled = false;
+                msg.innerText = "";
+                localStorage.removeItem("tiempoBloqueoAdmin");
+                localStorage.setItem("intentosFallidos", "0");
+            }
+        }, 1000);
+    }
+
+    function verificarLogin() {
+        let intentos = parseInt(localStorage.getItem("intentosFallidos")) || 0;
+        let u = document.getElementById("user").value;
+        let p = document.getElementById("pass").value;
+
+        let usuarioCorrecto = "admin";
+        let passwordCorrecta = "estefany2026";
+
+        if (u === usuarioCorrecto && p === passwordCorrecta) {
+            localStorage.setItem("sesionAdmin", "activo");
+            localStorage.setItem("intentosFallidos", "0");
+            window.location.href = "admin.html";
+        } else {
+            intentos++;
+            localStorage.setItem("intentosFallidos", intentos);
+            if (intentos >= 3) {
+                let unMinutoDespues = new Date().getTime() + 60000; // 60 segundos
+                localStorage.setItem("tiempoBloqueoAdmin", unMinutoDespues);
+                verificarBloqueo();
+            } else {
+                alert(`❌ Usuario o contraseña incorrectos. Te quedan ${3 - intentos} intentos.`);
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
